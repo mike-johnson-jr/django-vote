@@ -93,7 +93,7 @@ class _VotableManager(models.Manager):
 
     @instance_required
     def up(self, user_id, user_ip):
-        if not self.model.objects.filter(ip=user_ip).exists():
+        if not self.through.objects.filter(ip=user_ip).exists():
             return self.vote(user_id, user_ip, action=UP)
         else:
             return False
