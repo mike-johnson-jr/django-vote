@@ -88,12 +88,16 @@ class _VotableManager(models.Manager):
                 self.instance.save()
 
             return True
-        except Exception as e:
-            return e
+        except (OperationalError, IntegrityError):
+            return False
 
     @instance_required
     def up(self, user_id, user_ip):
-        if not self.through.objects.filter(ip=user_ip).exists():
+        content_type = ContentType.objects.get_for_model(self.model)
+        if not self.through.objects.filter(
+                object_id=self.instance.pk,
+                content_type=content_type,
+                ip=user_ip).exists():
             return self.vote(user_id, user_ip, action=UP)
         else:
             return False
