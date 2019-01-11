@@ -34,6 +34,8 @@ class Vote(models.Model):
     action = models.PositiveSmallIntegerField(default=UP)
     create_at = models.DateTimeField(auto_now_add=True)
 
+    ip = models.GenericIPAddressField()
+
     objects = VoteManager()
 
     class Meta:

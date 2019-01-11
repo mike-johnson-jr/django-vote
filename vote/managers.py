@@ -52,7 +52,7 @@ class _VotableManager(models.Manager):
         self.instance = instance
         self.field_name = field_name
 
-    def vote(self, user_id, action):
+    def vote(self, user_id, user_ip, action):
         try:
             with transaction.atomic():
                 self.instance = self.model.objects.select_for_update().get(
@@ -78,7 +78,8 @@ class _VotableManager(models.Manager):
                     self.through.objects.create(user_id=user_id,
                                                 content_type=content_type,
                                                 object_id=self.instance.pk,
-                                                action=action)
+                                                action=action,
+                                                ip=user_ip)
 
                 statistics_field = self.through.ACTION_FIELD.get(action)
                 setattr(self.instance, statistics_field,
@@ -91,12 +92,18 @@ class _VotableManager(models.Manager):
             return False
 
     @instance_required
-    def up(self, user_id):
-        return self.vote(user_id, action=UP)
+    def up(self, user_id, user_ip):
+        if not self.through.objects.filter(ip=user_ip).exists():
+            return self.vote(user_id, user_ip, action=UP)
+        else:
+            return False
 
     @instance_required
-    def down(self, user_id):
-        return self.vote(user_id, action=DOWN)
+    def down(self, user_id, user_ip):
+        if not self.through.objects.filter(ip=user_ip).exists():
+            return self.vote(user_id, user_ip, action=DOWN)
+        else:
+            return False
 
     @instance_required
     def delete(self, user_id):
