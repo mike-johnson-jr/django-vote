@@ -40,7 +40,7 @@ class Vote(models.Model):
 
     class Meta:
         unique_together = ('user_id', 'content_type',
-                           'object_id', 'action', 'ip')
+                           'object_id', 'action')
         index_together = ('content_type', 'object_id')
 
     @classmethod

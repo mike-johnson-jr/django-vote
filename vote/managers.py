@@ -93,17 +93,14 @@ class _VotableManager(models.Manager):
 
     @instance_required
     def up(self, user_id, user_ip):
-        if not self.through.objects.filter(ip=user_ip).exists():
+        if not self.model.objects.filter(ip=user_ip).exists():
             return self.vote(user_id, user_ip, action=UP)
         else:
             return False
 
     @instance_required
     def down(self, user_id, user_ip):
-        if not self.through.objects.filter(ip=user_ip).exists():
-            return self.vote(user_id, user_ip, action=DOWN)
-        else:
-            return False
+        return self.vote(user_id, user_ip, action=DOWN)
 
     @instance_required
     def delete(self, user_id):
