@@ -88,8 +88,8 @@ class _VotableManager(models.Manager):
                 self.instance.save()
 
             return True
-        except (OperationalError, IntegrityError):
-            return False
+        except Exception as e:
+            return e
 
     @instance_required
     def up(self, user_id, user_ip):
