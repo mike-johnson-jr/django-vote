@@ -34,12 +34,13 @@ class Vote(models.Model):
     action = models.PositiveSmallIntegerField(default=UP)
     create_at = models.DateTimeField(auto_now_add=True)
 
-    ip = models.GenericIPAddressField()
+    ip = models.GenericIPAddressField(blank=True, null=True)
 
     objects = VoteManager()
 
     class Meta:
-        unique_together = ('user_id', 'content_type', 'object_id', 'action')
+        unique_together = ('user_id', 'content_type',
+                           'object_id', 'action', 'ip')
         index_together = ('content_type', 'object_id')
 
     @classmethod
